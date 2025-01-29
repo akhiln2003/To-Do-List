@@ -51,11 +51,14 @@ export default function ListTask({ datas, setDatas }) {
   }
 
   return (
-    <div className="mt-5 mr-5">
-      <button className="mb-5 ml-3 text-zinc-300 hover:text-white transition-colors" onClick={updateStatus}>
+    <div className="mt-2 sm:mt-3 md:mt-4 px-2 sm:px-3 md:px-4">
+      <button 
+        className="mb-3 sm:mb-4 text-sm sm:text-base text-zinc-300 hover:text-white transition-colors" 
+        onClick={updateStatus}
+      >
         {butstatus ? "Show Completed" : "Show Active"}
       </button>
-      <ol>
+      <ol className="space-y-2 sm:space-y-3">
         {butstatus
           ? datas?.map((value, index) =>
               !value.isCompletted ? (
@@ -76,18 +79,19 @@ export default function ListTask({ datas, setDatas }) {
                     onDragStart={() => setActiveCard(index)}
                     onDragEnd={() => setActiveCard(null)}
                     key={index}
-                    className="flex items-center justify-between text-white bg-zinc-800 p-2 rounded ml-4 mb-3 hover:bg-zinc-700 transition-colors"
+                    className="flex items-center justify-between text-white bg-zinc-800 p-2 sm:p-3 rounded text-sm sm:text-base hover:bg-zinc-700 transition-colors"
                   >
-                    <span className="text">{value.task}</span>
-                    <div className="flex space-x-2">
+                    <span className="text break-words flex-1 mr-2">{value.task}</span>
+                    <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
                       <input
                         type="checkbox"
                         readOnly
                         checked={value.isCompletted}
                         onClick={() => taskcompleted(index)}
+                        className="w-4 h-4 sm:w-5 sm:h-5"
                       />
                       <button
-                        className="button hover:text-yellow-500 transition-colors"
+                        className="button hover:text-yellow-500 transition-colors text-lg sm:text-xl"
                         onClick={() => editTask(index)}
                       >
                         ✎
@@ -102,15 +106,16 @@ export default function ListTask({ datas, setDatas }) {
               value.isCompletted ? (
                 <div
                   key={index}
-                  className="flex items-center justify-between text-white bg-zinc-800 p-2 rounded ml-4 mb-3 hover:bg-zinc-700 transition-colors"
+                  className="flex items-center justify-between text-white bg-zinc-800 p-2 sm:p-3 rounded text-sm sm:text-base hover:bg-zinc-700 transition-colors"
                 >
-                  <span className="text line-through">{value.task}</span>
-                  <div className="flex space-x-2">
+                  <span className="text break-words flex-1 mr-2 line-through">{value.task}</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
                     <input
                       type="checkbox"
                       readOnly
                       checked={value.isCompletted}
                       onClick={() => taskInCompletted(index)}
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                     />
                     <DeleteTask index={index} datas={datas} setDatas={setDatas} />
                   </div>

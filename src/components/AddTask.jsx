@@ -38,18 +38,18 @@ export default function AddTask({ task, setNewTask, handleKeyDown }) {
 
   return (
     <div className="flex flex-col h-full sticky">
-      <div className="sticky top-0  px-5 py-3 z-10">
-        <div className="flex items-center">
+      <div className="sticky top-0 px-2 sm:px-3 md:px-4 lg:px-5 py-2 sm:py-3 z-10">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
           <input
             type="text"
-            className="h-10 bg-zinc-100 pl-3 text-xl w-full sm:w-auto flex-grow rounded-md"
+            className="h-10 bg-zinc-100 pl-3 text-base sm:text-lg w-full rounded-md"
             placeholder="Add Task"
             onKeyDown={(e) => handleKeyDown(e, handleAddTask)}
             value={task}
             onChange={(event) => setNewTask(event.target.value)}
           />
           <button
-            className="h-10 bg-yellow-900 rounded-lg ml-2 px-5 text-white hover:bg-yellow-800 transition-colors"
+            className="h-10 bg-yellow-900 rounded-lg px-4 sm:px-5 text-white hover:bg-yellow-800 transition-colors w-full sm:w-auto"
             onClick={handleAddTask}
           >
             Add
