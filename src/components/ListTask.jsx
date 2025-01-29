@@ -1,86 +1,123 @@
-
-import React , { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import DeleteTask from "./DeleteTask";
 import EditTask from "./EditTask";
+import { toast } from "react-toastify";
 
+export default function ListTask({ datas, setDatas }) {
+  const [edit, setEdit] = useState(-1);
+  const [butstatus, setBtnStatus] = useState(true);
+  const [activeCard, setActiveCard] = useState(null);
 
+  function editTask(index) {
+    setEdit(index);
+  }
 
-export default function ListTask( { datas  , setDatas }){
-    const [ edit , setEdit ] = useState(-1);
-    const [ butstatus , setBtnStatus ] = useState(true)
-    const [ activeCard , setActiveCard ] = useState(null);
+  function onDrop(position) {
+    if (activeCard === null || activeCard === undefined) return;
 
-    function editTask ( index ){
-        setEdit(index);
-    }
-    function onDrop( position ){
-        if( activeCard == null || activeCard == undefined ) return 
+    const newDatas = [...datas];
+    const data = newDatas[activeCard];
+    newDatas.splice(activeCard, 1);
+    newDatas.splice(position, 0, data);
+    setDatas(newDatas);
+    toast.info("Task reordered successfully!", { position: "top-center" });
+  }
 
-        let data = datas[activeCard]
-        datas.splice(activeCard , 1 );
-        datas.splice(position , 0 , data )
-        setDatas( datas )
-    }
-    function updateStatus(){
-        setBtnStatus(()=> !butstatus)
-    }
-    function taskcompleted( index ){
-        let updated = datas.map((value , i)=>{
-            return i == index ?  value = { "task" : value.task , "isCompletted" : true } :  value
-        })
-        
-        setDatas(updated)
-    }
+  function updateStatus() {
+    setBtnStatus(!butstatus);
+  }
 
-    function taskInCompletted( index ){
-        let updated = datas.map((value , i)=>{
-            return i == index ?  value = { "task" : value.task , "isCompletted" : false } :  value
-        })
-        setDatas(updated)
-    }
+  function taskcompleted(index) {
+    const updated = datas.map((value, i) => {
+      if (i === index) {
+        toast.success("Task marked as completed!", { position: "top-center" });
+        return { ...value, isCompletted: true };
+      }
+      return value;
+    });
+    setDatas(updated);
+  }
 
-   
-    return(
-        <>
-        <div className="mt-5 mr-5">
-        <button className="mb-5 ml-3 text-zinc-300"   onClick={updateStatus} >{ butstatus ? "Task" : "Completted" }</button>
-            <ol>
-                { 
-                  butstatus ? datas?.map( (value, index) => (
-                  !value.isCompletted ? 
-                    edit == index ? < EditTask key={index} index ={index}  currentval  ={value.task} setDatas = {setDatas} setEdit = { setEdit } datas ={datas} /> :
-                    <div 
-                    draggable 
-                    onDragOver={e=>e.preventDefault()}
-                    onDrop={()=> onDrop( index  )}
-                    onDragStart = {()=>{ setActiveCard(index)}}
-                    onDragEnd={ ()=> setActiveCard(null)}
-                     key={index}
-                      className="flex items-center justify-between border text-white bg-gray-600  border-gray-500 p-2 rounded ml-4 mb-3">
-                        <span className="text">{value.task}</span>
-                        <div className="flex space-x-2">
-                            <input type="checkbox"  readOnly checked={value.isCompletted} onClick={()=>taskcompleted(index)} />
-                             <button className="button" onClick={() => editTask(index)}>✎</button>
-                            < DeleteTask  index ={ index } datas = { datas } setDatas = { setDatas }/>
-                        </div>
-                    </div> :<></>
-                )) :
-                datas?.map( (value, index) => (
-                    value.isCompletted ? 
-                      edit == index ? < EditTask key={ value.task} index ={index}  currentval  ={value.task} setDatas = {setDatas} setEdit = { setEdit } datas ={datas} /> :
-                      <div key={value.task} className="flex items-center justify-between border text-white bg-gray-500  border-gray-500 p-2 rounded ml-4 mb-3">
-                          <span className="text">{value.task}</span>
-                          <div className="flex space-x-2">
-                              <input type="checkbox" readOnly checked={value.isCompletted} onClick={()=>taskInCompletted(index)} />
-                              < DeleteTask  index ={ index } datas = { datas } setDatas = { setDatas }/>
-                          </div>
-                      </div> :<></>
-                  ))
-                
-            }
-            </ol>
-        </div>
-    </>
-    
-    )
+  function taskInCompletted(index) {
+    const updated = datas.map((value, i) => {
+      if (i === index) {
+        toast.info("Task marked as incomplete!", { position: "top-center" });
+        return { ...value, isCompletted: false };
+      }
+      return value;
+    });
+    setDatas(updated);
+  }
+
+  return (
+    <div className="mt-5 mr-5">
+      <button className="mb-5 ml-3 text-zinc-300 hover:text-white transition-colors" onClick={updateStatus}>
+        {butstatus ? "Show Completed" : "Show Active"}
+      </button>
+      <ol>
+        {butstatus
+          ? datas?.map((value, index) =>
+              !value.isCompletted ? (
+                edit === index ? (
+                  <EditTask
+                    key={index}
+                    index={index}
+                    currentval={value.task}
+                    setDatas={setDatas}
+                    setEdit={setEdit}
+                    datas={datas}
+                  />
+                ) : (
+                  <div
+                    draggable
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => onDrop(index)}
+                    onDragStart={() => setActiveCard(index)}
+                    onDragEnd={() => setActiveCard(null)}
+                    key={index}
+                    className="flex items-center justify-between text-white bg-zinc-800 p-2 rounded ml-4 mb-3 hover:bg-zinc-700 transition-colors"
+                  >
+                    <span className="text">{value.task}</span>
+                    <div className="flex space-x-2">
+                      <input
+                        type="checkbox"
+                        readOnly
+                        checked={value.isCompletted}
+                        onClick={() => taskcompleted(index)}
+                      />
+                      <button
+                        className="button hover:text-yellow-500 transition-colors"
+                        onClick={() => editTask(index)}
+                      >
+                        ✎
+                      </button>
+                      <DeleteTask index={index} datas={datas} setDatas={setDatas} />
+                    </div>
+                  </div>
+                )
+              ) : null
+            )
+          : datas?.map((value, index) =>
+              value.isCompletted ? (
+                <div
+                  key={index}
+                  className="flex items-center justify-between text-white bg-zinc-800 p-2 rounded ml-4 mb-3 hover:bg-zinc-700 transition-colors"
+                >
+                  <span className="text line-through">{value.task}</span>
+                  <div className="flex space-x-2">
+                    <input
+                      type="checkbox"
+                      readOnly
+                      checked={value.isCompletted}
+                      onClick={() => taskInCompletted(index)}
+                    />
+                    <DeleteTask index={index} datas={datas} setDatas={setDatas} />
+                  </div>
+                </div>
+              ) : null
+            )}
+      </ol>
+    </div>
+  );
 }

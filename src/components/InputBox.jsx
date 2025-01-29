@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import AddTask from './AddTask';
 
 export default function InputBox() {
@@ -12,7 +12,7 @@ export default function InputBox() {
 
     return (
         <>
-            <AddTask task={newTask} setNewTask={setNewTask} handleKeyDown={handleKeyDown} />
+            <AddTask task={newTask} setNewTask={setNewTask} handleKeyDown={handleKeyDown}  />
         </>
     );
 }
